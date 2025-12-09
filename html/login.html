@@ -1,17 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de sesión</title>
+    <link rel="stylesheet" href="../css/login.css">
 </head>
+
 <body>
-    <form action="">
-        <label for="nombre">Nombre de usuario</label>
-        <input type="text">
-        <label for="password">Contraseña</label>
-        <input type="password">
-        <input type="button" value="Inciar sesión">
-    </form>
+    <div class="container">
+        <form class="login-box">
+            <h2>Iniciar Sesión</h2>
+
+            <label for="nombre">Nombre de usuario</label>
+            <input type="text" id="nombre" placeholder="Ingresa tu usuario">
+
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" placeholder="Ingresa tu contraseña">
+
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
 </body>
 </html>
