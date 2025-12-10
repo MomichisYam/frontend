@@ -1,13 +1,12 @@
-// registrarse.js
-
 // URL base de la API
 const API_BASE_URL = window.location.origin.includes('localhost') 
     ? 'http://localhost:8080' 
-    : 'https://tu-app.onrender.com'; //aqui poner la url cuando despleguemos weyes
+    : 'https://tu-app.onrender.com'; //cambiar esto por la url que usemos en el backend weyes
 
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('.login-box');
     
+    //Función para crear cuenta
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
         
@@ -16,23 +15,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const password = document.getElementById('password').value.trim();
         
         // Validaciones básicas
+
+        //Nombre y contraseñas vacios
         if (!username || !password) {
             alert('Por favor, completa todos los campos.');
             return;
         }
         
+        //Nombre de usuario menor a 3 caracteres
         if (username.length < 3) {
             alert('El nombre de usuario debe tener al menos 3 caracteres.');
             return;
         }
         
+        //Contraseña menor a seis caracteres
         if (password.length < 6) {
             alert('La contraseña debe tener al menos 6 caracteres.');
             return;
         }
-        
-        // Generar un email automático basado en el usuario
-        const email = `${username}@mail.com`;
         
         try {
             // Mostrar indicador de carga
@@ -49,21 +49,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({
                     username: username,
-                    email: email,
                     password: password
                 })
             });
             
-            // Manejar respuesta (puede ser JSON o texto)
-            const responseText = await response.text();
-            let data;
-            
-            try {
-                data = JSON.parse(responseText);
-            } catch {
-                // Si no es JSON, tratarlo como mensaje de texto
-                data = { message: responseText };
-            }
             
             // Restaurar botón
             submitButton.textContent = originalText;
@@ -95,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Validación en tiempo real (nombre de usuario y contraseña)
+    // Validación en tiempo real
     const usernameInput = document.getElementById('nombre');
     const passwordInput = document.getElementById('password');
     
