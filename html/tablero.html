@@ -1,12 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tablero de SCRUM</title>
+    <title>Scrum Board - Backlog</title>
+    <link rel="stylesheet" href="../css/tablero.css" />
   </head>
+
   <body>
-    Aquí va a estar el tablero de escrum o los proyectos y sus sprints
+    <div class="container">
+      <div class="table-box">
+        <div class="header-flex">
+            <h2>Sprint 24: Desarrollo Backend</h2>
+            <span class="sprint-dates">09 Dic - 23 Dic</span>
+        </div>
+        
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Historia de Usuario</th>
+                <th class="center-text">Puntos</th>
+                <th>Responsable</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>SCR-101</strong></td>
+                <td>Como usuario, quiero recuperar mi contraseña...</td>
+                <td class="center-text">5</td>
+                <td>Dev_Alex</td>
+                <td><span class="priority high">Alta</span></td>
+                <td><span class="status in-progress">En Progreso</span></td>
+              </tr>
+              <tr>
+                <td><strong>SCR-102</strong></td>
+                <td>Crear endpoint de Login con JWT</td>
+                <td class="center-text">8</td>
+                <td>Dev_Maria</td>
+                <td><span class="priority high">Alta</span></td>
+                <td><span class="status done">Completado</span></td>
+              </tr>
+              <tr>
+                <td><strong>SCR-103</strong></td>
+                <td>Optimizar consultas SQL de reportes</td>
+                <td class="center-text">3</td>
+                <td>Dev_Juan</td>
+                <td><span class="priority medium">Media</span></td>
+                <td><span class="status todo">Por Hacer</span></td>
+              </tr>
+              <tr>
+                <td><strong>SCR-104</strong></td>
+                <td>Actualizar documentación de API</td>
+                <td class="center-text">2</td>
+                <td>QA_Sofia</td>
+                <td><span class="priority low">Baja</span></td>
+                <td><span class="status blocked">Bloqueado</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="actions">
+            <button class="btn-secondary">Ver Burndown</button>
+            <button>Crear Tarea</button>
+        </div>
+        
+      </div>
+    </div>
+
     <script src="../config.js"></script>
   </body>
 </html>

@@ -1,0 +1,133 @@
+/* --- ESTILOS BASE (Mismos que tu login/tabla anterior) --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(360deg,rgba(22, 25, 37, 1) 0%, rgba(35, 57, 91, 1) 53%, rgba(64, 110, 142, 1) 99%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 950px; /* Un poco más ancho para que quepa la info de Scrum */
+    padding: 20px;
+}
+
+.table-box {
+    background-color: #e3fff8; 
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.4);
+    color: #23395B;
+}
+
+/* Encabezado con Flexbox para poner título y fecha en línea */
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #406E8E;
+}
+
+.table-box h2 {
+    margin: 0;
+    color: #23395B;
+}
+
+.sprint-dates {
+    background-color: #c8e3ff;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #406E8E;
+}
+
+/* --- TABLA --- */
+.table-responsive { overflow-x: auto; margin-bottom: 20px; }
+table { width: 100%; border-collapse: collapse; }
+
+thead tr {
+    background-color: #406E8E;
+    color: white;
+    text-align: left;
+}
+
+th, td { padding: 12px 15px; vertical-align: middle; }
+th { border-radius: 4px; }
+
+tbody tr { border-bottom: 1px solid #a3c2e0; }
+tbody tr:nth-of-type(even) { background-color: #c8e3ff; }
+tbody tr:nth-of-type(odd) { background-color: rgba(200, 227, 255, 0.3); }
+
+tbody tr:hover {
+    background-color: #8EA8C3;
+    color: white;
+    transition: 0.2s;
+}
+
+.center-text { text-align: center; }
+
+/* --- BADGES (Etiquetas de Estado y Prioridad) --- */
+.status, .priority {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+}
+
+/* Colores de Estado */
+.status.done { background-color: #2ecc71; color: white; }        /* Verde */
+.status.in-progress { background-color: #f1c40f; color: #333; } /* Amarillo */
+.status.todo { background-color: #95a5a6; color: white; }       /* Gris */
+.status.blocked { background-color: #e74c3c; color: white; }    /* Rojo */
+
+/* Colores de Prioridad (Texto simple) */
+.priority.high { color: #d32f2f; background-color: rgba(255,0,0,0.1); }
+.priority.medium { color: #f57c00; background-color: rgba(255,165,0,0.1); }
+.priority.low { color: #388e3c; background-color: rgba(0,128,0,0.1); }
+
+/* Hover fix para los badges: cuando la fila cambia de color, los badges se ajustan */
+tbody tr:hover .priority { background-color: white; }
+
+
+.actions {
+    display: flex;
+    gap: 10px; /* Espacio entre botones */
+    justify-content: flex-end; /* Alineados a la derecha */
+}
+
+button {
+    padding: 12px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.25s;
+    background-color: #406E8E; 
+    color: white;
+}
+
+button:hover { background-color: #23395B; }
+
+/* Botón secundario (estilo diferente) */
+.btn-secondary {
+    background-color: transparent;
+    border: 2px solid #406E8E;
+    color: #406E8E;
+}
+
+.btn-secondary:hover {
+    background-color: #c8e3ff;
+    color: #23395B;
+}
