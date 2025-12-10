@@ -1,14 +1,22 @@
-const btnLogin = document.getElementById("btnLogin");
-const btnLogout = document.getElementById("btnLogout");
-const btnGetSessions = document.getElementById("btnGetSessions");
-const loginSection = document.getElementById("loginSection");
-const dashboardSection = document.getElementById("dashboardSection");
-const apiResponse = document.getElementById("apiResponse");
+const loginForm = document.querySelector(".login-box");
+const inputNombre = document.getElementById("nombre");
+const inputPassword = document.getElementById("password");
 
-async function login() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  const msgLogin = document.getElementById("msgLogin");
+let msgLogin = document.getElementById("msgLogin");
+if (!msgLogin) {
+  msgLogin = document.createElement("p");
+  msgLogin.id = "msgLogin";
+}
+
+async function login(event) {
+  event.preventDefault();
+
+  const username = inputNombre.value;
+  const password = inputPassword.value;
+
+  if (msgLogin) {
+    msgLogin.textContent = "Intentando iniciar sesión...";
+  }
 
   try {
     const response = await fetch(`${CONFIG.API_URL}/auth/login`, {
@@ -20,72 +28,25 @@ async function login() {
     });
 
     if (response.ok) {
-      msgLogin.textContent = "";
-      toggleView(true);
+      if (msgLogin) {
+        msgLogin.textContent = "¡Inicio de sesión exitoso! Redirigiendo...";
+        msgLogin.style.color = "green";
+      }
       console.log("Login exitoso. Cookie guardada por el navegador.");
+      window.location.href = "../html/index2.html";
     } else {
-      msgLogin.textContent = "Error: Usuario o contraseña incorrectos";
-    }
-  } catch (error) {
-    console.error("Error de red:", error);
-    msgLogin.textContent = "Error de conexión con el servidor";
-  }
-}
-
-async function getPrivateData() {
-  try {
-    const response = await fetch(`${CONFIG.API_URL}/pomodoros`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      apiResponse.textContent = JSON.stringify(data, null, 2);
-    } else {
-      if (response.status === 401 || response.status === 403) {
-        apiResponse.textContent =
-          "No autorizado. Tu sesión expiró o no existe.";
-        toggleView(false);
-      } else {
-        apiResponse.textContent = `Error del servidor: ${response.status}`;
+      if (msgLogin) {
+        msgLogin.textContent = "Error: Usuario o contraseña incorrectos";
+        msgLogin.style.color = "red";
       }
     }
   } catch (error) {
-    apiResponse.textContent = "Error de red al intentar conectar.";
+    console.error("Error de red:", error);
+    if (msgLogin) {
+      msgLogin.textContent = "Error de conexión con el servidor";
+      msgLogin.style.color = "red";
+    }
   }
 }
 
-async function logout() {
-  try {
-    await fetch(`${CONFIG.API_URL}/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-
-    toggleView(false);
-    apiResponse.textContent = "Waiting...";
-    document.getElementById("username").value = "";
-    document.getElementById("password").value = "";
-    console.log("Sesión cerrada.");
-  } catch (error) {
-    console.error("Error al cerrar sesión", error);
-  }
-}
-
-function toggleView(isAuthenticated) {
-  if (isAuthenticated) {
-    loginSection.classList.add("hidden");
-    dashboardSection.classList.remove("hidden");
-  } else {
-    loginSection.classList.remove("hidden");
-    dashboardSection.classList.add("hidden");
-  }
-}
-
-btnLogin.addEventListener("click", login);
-btnLogout.addEventListener("click", logout);
-btnGetSessions.addEventListener("click", getPrivateData);
+loginForm.addEventListener("submit", login);
