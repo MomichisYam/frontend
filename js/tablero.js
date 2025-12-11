@@ -20,7 +20,7 @@ function cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil){
     } else {
         //Si no hay un usuario guardado en el localStorage se regresa al Login
         alert("No se identificó un inicio de sesión, regresando al login");
-        window.location.href("login.html")
+        window.location.href = "login.html";
     }
 }
 
