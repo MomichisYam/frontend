@@ -25,6 +25,7 @@ async function login(event) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ username, password }),
+      credentials: "include",
     });
 
     if (response.ok) {
@@ -37,9 +38,7 @@ async function login(event) {
 
       console.log("Login exitoso. Cookie guardada por el navegador.");
       window.location.href = "../html/tablero.html";
-
     } else {
-
       if (msgLogin) {
         msgLogin.textContent = "Error: Usuario o contraseña incorrectos";
         msgLogin.style.color = "red";
