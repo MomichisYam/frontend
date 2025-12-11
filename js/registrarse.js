@@ -1,8 +1,3 @@
-// URL base de la API
-const API_BASE_URL = window.location.origin.includes('localhost') 
-    ? 'http://localhost:8080' 
-    : 'https://tu-app.onrender.com'; //cambiar esto por la url que usemos en el backend weyes
-
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('.login-box');
     
@@ -42,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.disabled = true;
             
             // Realizar la petición de registro
-            const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+            const response = await fetch(`${CONFIG.API_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
