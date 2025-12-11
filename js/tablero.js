@@ -159,8 +159,10 @@ async function cerrarSesion() {
 
 //Tengo q meterle lo del filtro
 function recargarTabla(tareas, tabla) {
+    //Vaciamos la tabla
     tabla.innerHTML = "";
 
+    //Variable fila declarada para su uso en cada uno de los casos
     let fila = ``;
 
     //Validar que el JSON no venga vacio, si esta vacio va a retornar "No tienes ninguna tarea creada"
@@ -191,7 +193,7 @@ function recargarTabla(tareas, tabla) {
             //Le establecemos en el class del span de status la función para que el color del status cambie de color
             fila = `
             <tr>
-                <td class="center-text"><strong>${tarea.id}</strong></td>
+                <td class="center-text"><strong>${id}</strong></td>
                 <td class="center-text">${tarea.taskName}</td>
                 <td class="center-text">${tarea.durationMinutes}</td>
                 <td class="center-text">${fecha}</td>
