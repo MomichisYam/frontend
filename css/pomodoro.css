@@ -1,0 +1,281 @@
+/* --- ESTILOS BASE --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(360deg, rgba(22, 25, 37, 1) 0%, rgba(35, 57, 91, 1) 53%, rgba(64, 110, 142, 1) 99%);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --- BOTÓN VOLVER (similar al pomodoro del tablero) --- */
+.pomodoro-back {
+    background-color: #e3fff8;
+    position: fixed;
+    border-radius: 10px;
+    top: 80px;
+    left: 20px;
+    z-index: 100;
+    padding: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.pomodoro-back:hover {
+    transform: scale(1.05);
+}
+
+.pomodoro-back img {
+    width: 60px;
+    height: 60px;
+    display: block;
+}
+
+/* --- HEADER SUPERIOR --- */
+.top-bar {
+    width: 100%;
+    height: 70px;
+    background-color: rgba(22, 25, 37, 0.9);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    border-bottom: 1px solid #406E8E;
+    color: white;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 101;
+}
+
+.logo-section h1 {
+    font-size: 24px;
+    color: #e3fff8;
+    margin: 0;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #406E8E;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    border: 2px solid #e3fff8;
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.container {
+    width: 100%;
+    max-width: 950px;
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+/* --- CAJA DEL TEMPORIZADOR --- */
+.pomodoro-box {
+    background-color: #e3fff8;
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.4);
+    color: #23395B;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+/* --- DISPLAY DEL TEMPORIZADOR (SIMPLIFICADO) --- */
+.timer-display {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+}
+
+
+
+.time-text {
+    font-size: 6rem;
+    font-weight: bold;
+    color: #23395B;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 50px;
+}
+
+
+
+/* --- CONTROLES DEL TEMPORIZADOR --- */
+.timer-controls {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+}
+
+.control-btn {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 140px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.control-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.start-btn {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: white;
+}
+
+.pause-btn {
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+    color: white;
+}
+
+.reset-btn {
+    background: linear-gradient(135deg, #406E8E, #23395B);
+    color: white;
+}
+
+.btn-icon {
+    font-size: 1.3rem;
+}
+
+.btn-text {
+    font-size: 1rem;
+}
+
+/* --- CONFIGURACIÓN DE TIEMPO --- */
+.time-settings {
+    width: 100%;
+    background-color: #c8e3ff;
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid #406E8E;
+}
+
+.time-settings h3 {
+    color: #23395B;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+.time-options {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+}
+
+.time-option input[type="radio"] {
+    display: none;
+}
+
+.time-option label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #e3fff8;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    width: 120px;
+}
+
+.time-option label:hover {
+    border-color: #406E8E;
+    transform: translateY(-2px);
+}
+
+.time-option input[type="radio"]:checked + label {
+    background-color: #406E8E;
+    color: white;
+    border-color: #23395B;
+}
+
+.option-time {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+}
+
+.option-label {
+    font-size: 0.9rem;
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* --- INFORMACIÓN DE SESIÓN --- */
+.session-info {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    background-color: #c8e3ff;
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid #406E8E;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: #406E8E;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.info-value {
+    font-size: 1.3rem;
+    color: #23395B;
+    font-weight: bold;
+    text-align: center;
+}
+

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Temporizador Pomodoro</title>
+    <link rel="stylesheet" href="../css/pomodoro.css" />
+</head>
+
+<body>
+    <header class="top-bar">
+        <div class="logo-section">
+            <h1>Temporizador Pomodoro</h1>
+        </div>
+        <div class="user-profile">
+            <span class="welcome-text">Hola, <strong id="usernameDisplay">Usuario</strong></span>
+            <div class="user-avatar" id="userAvatar">U</div>
+        </div>
+    </header>
+
+    <div class="pomodoro-back">
+        <a href="../html/tablero.html">
+            <img src="../imagenes/volver.png" alt="Volver al Tablero">
+        </a>
+    </div>
+
+    <div class="container">
+        <div class="pomodoro-box">
+            <!-- Temporizador principal -->
+            <div class="timer-display">
+                <div class="time-text">
+                    <span id="minutes">25</span>:<span id="seconds">00</span>
+                </div>
+            </div>
+
+            <!-- Controles del temporizador -->
+            <div class="timer-controls">
+                <button class="control-btn start-btn" id="startBtn">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-text">Iniciar</span>
+                </button>
+                <button class="control-btn pause-btn" id="pauseBtn" disabled>
+                    <span class="btn-icon">⏸</span>
+                    <span class="btn-text">Pausar</span>
+                </button>
+                <button class="control-btn reset-btn" id="resetBtn">
+                    <span class="btn-icon">↻</span>
+                    <span class="btn-text">Reiniciar</span>
+                </button>
+            </div>
+
+            <!-- Configuración de tiempo -->
+            <div class="time-settings">
+                <h3>Configurar Tiempo</h3>
+                <div class="time-options">
+                    <div class="time-option">
+                        <input type="radio" id="pomodoro25" name="timerMode" checked>
+                        <label for="pomodoro25">
+                            <span class="option-time">25:00</span>
+                            <span class="option-label">Pomodoro</span>
+                        </label>
+                    </div>
+                    <div class="time-option">
+                        <input type="radio" id="shortBreak5" name="timerMode">
+                        <label for="shortBreak5">
+                            <span class="option-time">05:00</span>
+                            <span class="option-label">Descanso Corto</span>
+                        </label>
+                    </div>
+                    <div class="time-option">
+                        <input type="radio" id="longBreak15" name="timerMode">
+                        <label for="longBreak15">
+                            <span class="option-time">15:00</span>
+                            <span class="option-label">Descanso Largo</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de sesión -->
+            <div class="session-info">
+                <div class="info-item">
+                    <span class="info-label">Sesión Actual:</span>
+                    <span class="info-value" id="currentSession">Tarea de Ejemplo</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Pomodoros Completados:</span>
+                    <span class="info-value" id="completedCount">0</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tiempo Total:</span>
+                    <span class="info-value" id="totalTime">00:00</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../config.js"></script>
+    <script src="../js/pomodoro.js"></script>
+</body>
+
+</html>
