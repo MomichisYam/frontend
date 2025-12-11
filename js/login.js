@@ -32,9 +32,14 @@ async function login(event) {
         msgLogin.textContent = "¡Inicio de sesión exitoso! Redirigiendo...";
         msgLogin.style.color = "green";
       }
+
+      localStorage.setItem("UsuarioActivo", username);
+
       console.log("Login exitoso. Cookie guardada por el navegador.");
       window.location.href = "../html/tablero.html";
+
     } else {
+
       if (msgLogin) {
         msgLogin.textContent = "Error: Usuario o contraseña incorrectos";
         msgLogin.style.color = "red";
