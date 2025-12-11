@@ -1,4 +1,6 @@
+//Todo lo que se hace una vez que la pagina se carga
 document.addEventListener("DOMContentLoaded", () => {
+    //Jalamos el nombre del usuario desde el item UsuarioActivo del LocalStorage
     const usuario = localStorage.getItem("UsuarioActivo");
     const nombreDeUsuarioText = document.getElementById("usernameDisplay");
     const letrasPerfil = document.getElementById("userAvatar");
@@ -7,11 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const botonAgregar = document.getElementById("botonAgregarTarea");
     botonAgregar.addEventListener("click", formularioCreacionDeTareas);
 
-    //Le asignamos al div donde esta el nombre del usuario una funcion para abrir una lista desplegable
+    //Le asignamos al div donde esta el nombre del usuario una funcion para abrir una lista desplegable que tendrá el boton de cerrar sesión
     const perfilParte = document.getElementById("perfilParte");
     perfilParte.addEventListener("click", abrirMenuDesplegablePerfil);
 
+    //Se carga el usuario en la parte del header y se ponen las letras en el circulo de perfil
     cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil);
+    //Carga las tareas del usuario
+    cargarTareas();
 });
 
 function abrirMenuDesplegablePerfil() {
@@ -42,6 +47,7 @@ function abrirMenuDesplegablePerfil() {
     }
 }
 
+//Carga el nombre de usuario en la parte del header y las letras en el circulo de perfil
 function cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil) {
     if (usuario) {
         //Si encuentra un usuario en el LocalStorage cambia el nombre de la parte del header
@@ -57,10 +63,12 @@ function cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil) {
     }
 }
 
-function cargarTareas() {
+//Va a cargar las tareas que tenga el usuario y si no hay nadota va a retornar un mensaje diciendo eso
+async function cargarTareas() {
 
 }
 
+//Creamos una tarea nueva pasandole el nombre y el tiempo que se establece desde el modal de creacion de tareas
 async function crearTarea(nombreTarea, tiempo) {
     //Valida que los campos no esten vacios
     if (nombreTarea.value.trim() === "" || tiempo.value.trim() === "") {
@@ -94,6 +102,7 @@ async function crearTarea(nombreTarea, tiempo) {
     }
 }
 
+//Adivina que es lo que hace esta función
 async function cerrarSesion() {
     try {
         const response = await fetch(`${CONFIG.API_URL}/auth/logout`, {
