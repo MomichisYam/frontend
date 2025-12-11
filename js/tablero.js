@@ -13,10 +13,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const perfilParte = document.getElementById("perfilParte");
     perfilParte.addEventListener("click", abrirMenuDesplegablePerfil);
 
+    //Se selecciona solo el contenido de la etiqueta tbody dentro de la etiqueta table y se mete a una variable
+    const tabla = document.querySelector("table tbody");
+
     //Se carga el usuario en la parte del header y se ponen las letras en el circulo de perfil
     cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil);
     //Carga las tareas del usuario
-    cargarTareas();
+    cargarTareas(tabla);
 });
 
 function abrirMenuDesplegablePerfil() {
@@ -64,8 +67,26 @@ function cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil) {
 }
 
 //Va a cargar las tareas que tenga el usuario y si no hay nadota va a retornar un mensaje diciendo eso
-async function cargarTareas() {
+async function cargarTareas(tabla) {
+    try {
+        const response = await fetch(`${CONFIG.API_URL}/pomodoros`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
 
+        if (response.ok) {
+            //Nos regresa un JSON con todas las tareas Listadas
+            const tareas = await response.json();
+            recargarTabla(tareas, tabla);
+        } else {
+            console.error("Error al cargar tareas:", response.status);
+        }
+    } catch (error) {
+        console.error("Error de red:", error);
+    }
 }
 
 //Creamos una tarea nueva pasandole el nombre y el tiempo que se establece desde el modal de creacion de tareas
@@ -92,7 +113,14 @@ async function crearTarea(nombreTarea, tiempo) {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("Sesión creada con ID:", data.id);
+                /* console.log("Sesión creada con ID:", data.id); */
+
+                //Recarga la tabla con la nueva tarea
+                const tabla = document.querySelector("table tbody");
+                cargarTareas(tabla);
+
+                //Cerramos la pestaña
+                cerrarFormularioCreacionDeTareas()
             } else {
                 console.error("Error al crear sesión:", response.status);
             }
@@ -102,7 +130,7 @@ async function crearTarea(nombreTarea, tiempo) {
     }
 }
 
-//Adivina que es lo que hace esta función
+//Adivina que es lo que hace esta función (Rompe la cookie y borra el nombre de LocalStorage)
 async function cerrarSesion() {
     try {
         const response = await fetch(`${CONFIG.API_URL}/auth/logout`, {
@@ -115,10 +143,10 @@ async function cerrarSesion() {
 
         if (response.ok) {
             alert("Cerrando sesión...");
-            
+
             //Borramos el nombre que guardamos en el LocalStorage
             localStorage.removeItem("UsuarioActivo");
-            
+
             //Redirigir al usuario al login
             window.location.href = "login.html";
         } else {
@@ -126,6 +154,68 @@ async function cerrarSesion() {
         }
     } catch (error) {
         console.error("Error de red:", error);
+    }
+}
+
+//Tengo q meterle lo del filtro
+function recargarTabla(tareas, tabla) {
+    tabla.innerHTML = "";
+
+    let fila = ``;
+
+    //Validar que el JSON no venga vacio, si esta vacio va a retornar "No tienes ninguna tarea creada"
+    if (Object.keys(tareas).length === 0) {
+        //Se agrega el mensaje dentro de una fila que abarque las 5 columnas de la tabla
+        fila = `
+        <tr>
+            <td colspan="5" class="center-text">
+                <p>No hay tareas disponibles, intenta crear una nueva tarea!</p>
+            </td>
+        </tr>
+        `;
+
+        //Le agregamos la fila que creamos con el mensaje
+        tabla.innerHTML += fila;
+
+    } else {
+        //Si el JSON no viene vacio se hará el procedimiento normalmente:
+
+        //Por cada registro de tarea dentro del JSON va a hacer lo siguiente
+        tareas.forEach(tarea => {
+            //Pasamos el valor de la fecha a un string legible
+            const fecha = new Date(tarea.createdAt).toLocaleDateString();
+
+            const id = "..." + tarea.id.substring(18);
+
+            //Creamos el html de la fila con los valores que sacamos del JSON
+            //Le establecemos en el class del span de status la función para que el color del status cambie de color
+            fila = `
+            <tr>
+                <td class="center-text"><strong>${tarea.id}</strong></td>
+                <td class="center-text">${tarea.taskName}</td>
+                <td class="center-text">${tarea.durationMinutes}</td>
+                <td class="center-text">${fecha}</td>
+                <td class="center-text">
+                    <span class="status ${obtenerStatus(tarea.status)}">
+                        ${tarea.status}
+                    </span>
+                </td>
+            </tr>`;
+
+            //Se le va sumando cada fila hasta que ya no haya ninguna tarea
+            tabla.innerHTML += fila
+        });
+    }
+}
+
+//Convierte cada estado de los que vienen asignados en el JSON a los estados asignados dentro del CSS para que cambien de color segun este
+function obtenerStatus(status) {
+    switch (status) {
+        case 'PENDING': return 'PorHacer';
+        case 'IN_PROGRESS': return 'EnProgreso';
+        case 'TERMINTED': return 'Hecha';
+        case 'PAUSED': return 'Pausada';
+        default: return '';
     }
 }
 
