@@ -33,7 +33,7 @@ async function login(event) {
         msgLogin.style.color = "green";
       }
       console.log("Login exitoso. Cookie guardada por el navegador.");
-      window.location.href = "../html/index2.html";
+      window.location.href = "../html/tablero.html";
     } else {
       if (msgLogin) {
         msgLogin.textContent = "Error: Usuario o contraseña incorrectos";
