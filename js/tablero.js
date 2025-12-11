@@ -27,7 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //Se carga el usuario en la parte del header y se ponen las letras en el circulo de perfil
     cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil);
-    //Carga las tareas del usuario
+    
+    //Carga las tareas del usuario en un JSON
     cargarTareas(tabla);
 });
 
