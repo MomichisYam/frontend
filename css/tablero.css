@@ -6,8 +6,8 @@ body {
     background: linear-gradient(360deg,rgba(22, 25, 37, 1) 0%, rgba(35, 57, 91, 1) 53%, rgba(64, 110, 142, 1) 99%);
     height: 100vh;
     display: flex;
-    flex-direction: column; /* IMPORTANTE: Apila el Header y el Container verticalmente */
-    overflow: hidden; /* Evita scroll doble si la tabla es pequeña */
+    flex-direction: column;
+    overflow: hidden;
 }
 
 /* --- NUEVO HEADER SUPERIOR --- */

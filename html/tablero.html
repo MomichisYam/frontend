@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scrum Board - Backlog</title>
+    <title>Tabla de Tareas Pomodoro</title>
     <link rel="stylesheet" href="../css/tablero.css" />
+    <link rel="stylesheet" href="../css/modalAgregar.css">
     </head>
 
   <body>
@@ -13,8 +14,8 @@
             <h1>Tablero de Scrum</h1>
         </div>
         <div class="user-profile">
-            <span class="welcome-text">Hola, <strong id="username-display">Usuario Ejemplo</strong></span>
-            <div class="user-avatar">DA</div>
+            <span class="welcome-text">Hola, <strong id="usernameDisplay">Usuario Ejemplo</strong></span>
+            <div class="user-avatar" id="userAvatar">UE</div>
         </div>
     </header>
 
@@ -56,13 +57,14 @@
         </div>
 
         <div class="actions">
-            <button class="btn-secondary">Editar Tarea</button>
-            <button>Agregar Tarea</button>
+            <button class="btn-secondary" id="botonEditarTarea">Editar Tarea</button>
+            <button id="botonAgregarTarea">Agregar Tarea</button>
         </div>
         
       </div>
     </div>
 
     <script src="../config.js"></script>
+    <script src="../js/tablero.js"></script>
   </body>
 </html>

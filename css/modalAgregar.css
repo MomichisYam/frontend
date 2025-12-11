@@ -1,0 +1,45 @@
+.pantalla-agregar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Negro semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que esté encima de todo */
+    backdrop-filter: blur(5px); /* Efecto borroso bonito */
+}
+
+/* La cajita blanca del centro */
+.contenido-pantalla-agregar {
+    background-color: #e3fff8;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    border: 2px solid #406E8E;
+    animation: aparecer 0.3s ease-out;
+}
+
+.contenido-pantalla-agregar h2 {
+    color: #23395B;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.contenido-pantalla-agregar input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #406E8E;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
