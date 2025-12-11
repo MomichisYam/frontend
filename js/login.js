@@ -29,12 +29,14 @@ async function login(event) {
     });
 
     if (response.ok) {
+      const data = await response.json();
       if (msgLogin) {
         msgLogin.textContent = "¡Inicio de sesión exitoso! Redirigiendo...";
         msgLogin.style.color = "green";
       }
 
       localStorage.setItem("UsuarioActivo", username);
+      localStorage.setItem("UserId", data.userId);
 
       console.log("Login exitoso. Cookie guardada por el navegador.");
       window.location.href = "../html/tablero.html";

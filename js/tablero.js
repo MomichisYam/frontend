@@ -275,6 +275,12 @@ function recargarTabla(tareas, tabla) {
 
 //Selecciona una fila de la tabla y la id de esa fila se va a asignar a la variable global de ID
 function seleccionarFila(id){
+    const tarea = datosTareas.find(t => t.id === id);
+    if (tarea) {
+        localStorage.setItem("TaskId", tarea.id);
+        localStorage.setItem("TaskName", tarea.taskName);
+        localStorage.setItem("TaskDuration", tarea.durationMinutes);
+    }
     //Cambiamos el valor de la variable global por la que se envia al dar click en una fila
     idTareaSeleccionada = id;
 

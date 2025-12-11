@@ -1,0 +1,98 @@
+/* Heredamos estilos base del body */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(360deg,rgba(22, 25, 37, 1) 0%, rgba(35, 57, 91, 1) 53%, rgba(64, 110, 142, 1) 99%);
+    color: white;
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* Header Reutilizado */
+.top-bar {
+    background-color: rgba(22, 25, 37, 0.9);
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    border-bottom: 1px solid #406E8E;
+}
+
+.user-profile { display: flex; align-items: center; gap: 15px; color: #e3fff8; }
+.user-avatar {
+    width: 40px; height: 40px; background-color: #406E8E;
+    border-radius: 50%; display: flex; justify-content: center;
+    align-items: center; font-weight: bold; border: 2px solid #e3fff8;
+}
+
+/* Contenedor Principal */
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.back-button-container { margin: 20px 40px; }
+.btn-back {
+    color: #e3fff8; text-decoration: none; font-weight: bold;
+    background: #406E8E; padding: 10px 20px; border-radius: 8px;
+    transition: 0.3s;
+}
+.btn-back:hover { background: #23395B; }
+
+/* Grid del Dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Tarjetas */
+.stat-card {
+    background-color: #e3fff8;
+    color: #23395B;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover { transform: translateY(-5px); }
+
+.icon { font-size: 2.5rem; }
+
+.info h3 { margin: 0 0 5px 0; font-size: 1rem; color: #406E8E; }
+.info p { margin: 0; font-size: 2rem; font-weight: bold; }
+.subtext { font-size: 0.8rem; color: #666; }
+
+/* Estilo especial para la tarjeta ancha */
+.full-width {
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Barra de Progreso */
+.progress-bar-container {
+    width: 100%;
+    background-color: #c8e3ff;
+    border-radius: 10px;
+    height: 30px;
+    margin-top: 15px;
+    overflow: hidden;
+    border: 1px solid #406E8E;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    text-align: right;
+    padding-right: 10px;
+    line-height: 30px;
+    color: white;
+    font-weight: bold;
+    transition: width 1s ease-in-out;
+}

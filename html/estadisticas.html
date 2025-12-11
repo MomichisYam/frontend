@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Métricas</title>
+    <link rel="stylesheet" href="../css/estadisticas.css">
+    </head>
+<body>
+    <header class="top-bar">
+        <div class="logo-section">
+            <h1>Métricas de Productividad</h1>
+        </div>
+        <div class="user-profile">
+            <span class="welcome-text">Usuario: <strong id="usernameDisplay">...</strong></span>
+            <div class="user-avatar" id="userAvatar">U</div>
+        </div>
+    </header>
+
+    <div class="back-button-container">
+        <a href="tablero.html" class="btn-back">⬅ Volver al Tablero</a>
+    </div>
+
+    <div class="container">
+        <div class="dashboard-grid">
+            
+            <div class="stat-card total-focus">
+                <div class="icon">⏱️</div>
+                <div class="info">
+                    <h3>Tiempo de Enfoque</h3>
+                    <p id="totalMinutes">Cargando...</p>
+                    <span class="subtext">Minutos totales</span>
+                </div>
+            </div>
+
+            <div class="stat-card sessions-count">
+                <div class="icon">🍅</div>
+                <div class="info">
+                    <h3>Pomodoros</h3>
+                    <p id="totalSessions">Cargando...</p>
+                    <span class="subtext">Sesiones terminadas</span>
+                </div>
+            </div>
+
+            <div class="stat-card interruptions">
+                <div class="icon">✋</div>
+                <div class="info">
+                    <h3>Interrupciones</h3>
+                    <p id="totalInterruptions">Cargando...</p>
+                    <span class="subtext">Pausas realizadas</span>
+                </div>
+            </div>
+
+            <div class="stat-card skipped-breaks">
+                <div class="icon">⏭️</div>
+                <div class="info">
+                    <h3>Descansos Saltados</h3>
+                    <p id="totalSkipped">Cargando...</p>
+                    <span class="subtext">¡Tómate un respiro!</span>
+                </div>
+            </div>
+
+            <div class="stat-card efficiency full-width">
+                <h3>Eficiencia Promedio</h3>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="efficiencyBar" style="width: 0%">0%</div>
+                </div>
+                <p class="efficiency-text" id="efficiencyText">Calculando basado en interrupciones por sesión...</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../config.js"></script>
+    <script src="../js/estadisticas.js"></script>
+</body>
+</html>
