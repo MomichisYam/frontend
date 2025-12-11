@@ -3,13 +3,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const usuario = localStorage.getItem("UsuarioActivo");
     const nombreDeUsuarioText = document.getElementById("usernameDisplay");
     const letrasPerfil = document.getElementById("userAvatar");
-    const botonAgregar = document.getElementById("botonAgregarTarea");
 
     //Le asignamos al boton de "Agregar Tarea" la funcion para que aparezca la pantalla donde ingresa los datos.
+    const botonAgregar = document.getElementById("botonAgregarTarea");
     botonAgregar.addEventListener("click", formularioCreacionDeTareas);
+
+    //Le asignamos al div donde esta el nombre del usuario una funcion para abrir una lista desplegable
+    const perfilParte = document.getElementById("perfilParte");
+    perfilParte.addEventListener("click", abrirMenuDesplegablePerfil);
 
     cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil);    
 })
+
+function abrirMenuDesplegablePerfil(){
+    //Si no existe el menu, crea uno nuevo
+    if(!document.getElementById("menuDesplegablePerfil")){
+        const menuDesplegable = document.createElement("div");
+        menuDesplegable.id = "menuDesplegablePerfil";
+        menuDesplegable.className = "menu-desplegable-perfil";
+
+        //Contenido del html
+        menuDesplegable.innerHTML = `
+            <ul>
+                <li id="cerrarSesion">
+                    <button onclick= cerrarSesion()>Cerrar sesión</button>
+                </li>
+            </ul>
+        `;
+
+        const perfilParte = document.getElementById("perfilParte");
+        perfilParte.appendChild(menuDesplegable);
+
+        //Si ya esta abierto el menu, se cerrará al darle click
+    } else {
+        const menuExistente = document.getElementById("menuDesplegablePerfil");
+        perfilParte.removeChild(menuExistente);
+    }
+}
 
 function cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil){   
     if(usuario){
@@ -32,7 +62,6 @@ async function crearTarea(nombreTarea, tiempo){
 
     //Valida que los campos no esten vacios
     if(nombreTarea.value.trim() === "" || tiempo.value.trim() === ""){
-
         alert("Llena todos los campos");
         return;
 
