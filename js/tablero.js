@@ -1,3 +1,9 @@
+/* ----------VARIABLES GLOBALES----------*/
+//Definición de la copia local de los datos de la BD.
+let datosTareas = [];
+//Id de la tarea seleccionada en la tabla para su uso al editar la tarea.
+let idTareaSeleccionada = null;
+
 //Todo lo que se hace una vez que la pagina se carga
 document.addEventListener("DOMContentLoaded", () => {
     //Jalamos el nombre del usuario desde el item UsuarioActivo del LocalStorage
@@ -8,6 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
     //Le asignamos al boton de "Agregar Tarea" la funcion para que aparezca la pantalla donde ingresa los datos.
     const botonAgregar = document.getElementById("botonAgregarTarea");
     botonAgregar.addEventListener("click", formularioCreacionDeTareas);
+
+    const botonEditar = document.getElementById("botonEditarTarea");
+    botonEditar.addEventListener("click", formularioModificacionDeTareas);
 
     //Le asignamos al div donde esta el nombre del usuario una funcion para abrir una lista desplegable que tendrá el boton de cerrar sesión
     const perfilParte = document.getElementById("perfilParte");
@@ -22,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarTareas(tabla);
 });
 
+//Nadamas muestra un boton para cerrar sesión junto a los datos del usuario al dar click en esa parte
 function abrirMenuDesplegablePerfil() {
     //Se hace otro div para que no haya problemas al presionar el boton que se crea, ya que este boton esta dentro del div de perfilParte
     const partePerfil = document.getElementById("parteDePerfil");
@@ -66,7 +76,7 @@ function cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil) {
     }
 }
 
-//Va a cargar las tareas que tenga el usuario y si no hay nadota va a retornar un mensaje diciendo eso
+//Va a generar un JSON con todos los registros de la tabla segun el id del usuario que este registrado
 async function cargarTareas(tabla) {
     try {
         const response = await fetch(`${CONFIG.API_URL}/pomodoros`, {
@@ -80,6 +90,11 @@ async function cargarTareas(tabla) {
         if (response.ok) {
             //Nos regresa un JSON con todas las tareas Listadas
             const tareas = await response.json();
+
+            //Guardamos el contenido del JSON de forma local para la parte de edición
+            datosTareas = tareas;
+
+            //Se usan los datos del JSON para llenar la tabla
             recargarTabla(tareas, tabla);
         } else {
             console.error("Error al cargar tareas:", response.status);
@@ -98,7 +113,7 @@ async function crearTarea(nombreTarea, tiempo) {
     } else {
         const nuevaTarea = {
             taskName: nombreTarea.value,
-            durationMinutes: tiempo.value,
+            durationMinutes: parseInt(tiempo.value)
         };
 
         try {
@@ -120,14 +135,60 @@ async function crearTarea(nombreTarea, tiempo) {
                 cargarTareas(tabla);
 
                 //Cerramos la pestaña
-                cerrarFormularioCreacionDeTareas()
+                cerrarFormulario("pantallaAgregar")
             } else {
-                console.error("Error al crear sesión:", response.status);
+                console.error("Error al crear tarea:", response.status);
             }
         } catch (error) {
             console.error("Error de red:", error);
         }
     }
+}
+
+//Modificamos los valores nombre, tiempo y el estado de una tarea existente
+async function modificarTarea(nombreTarea, tiempo, estado){
+    //Valida que los campos no esten vacios, no se valida el estado porque ese nunca va a estar vacio
+    if (nombreTarea.value.trim() === "" || tiempo.value.trim() === "") {
+        alert("Llena todos los campos");
+        return;
+    } else {
+        const nuevosDatos = {
+            taskName: nombreTarea.value,
+            durationMinutes: parseInt(tiempo.value),
+            status: estado.value
+        };
+
+        try {
+            const response = await fetch(`${CONFIG.API_URL}/pomodoros/${idTareaSeleccionada}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(nuevosDatos),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                //Recarga la tabla con la tarea editada
+                const tabla = document.querySelector("table tbody");
+                cargarTareas(tabla);
+
+                //Cerramos la pestaña
+                cerrarFormulario("pantallaEditar")
+            } else {
+                console.error("Error al editar tarea:", response.status);
+            }
+        } catch (error) {
+            console.error("Error de red:", error);
+        }
+    }
+}
+
+//GRR PINCHE ERNESTO NO LE HA METIDO EL ENDPOINT PARA ELIMINAR LAS TAREAS
+async function eliminarTarea(){
+
 }
 
 //Adivina que es lo que hace esta función (Rompe la cookie y borra el nombre de LocalStorage)
@@ -157,7 +218,7 @@ async function cerrarSesion() {
     }
 }
 
-//Tengo q meterle lo del filtro
+//Toma el JSON que sacamos de "cargarTareas" y lo utiliza para llenar la tabla de datos
 function recargarTabla(tareas, tabla) {
     //Vaciamos la tabla
     tabla.innerHTML = "";
@@ -187,13 +248,15 @@ function recargarTabla(tareas, tabla) {
             //Pasamos el valor de la fecha a un string legible
             const fecha = new Date(tarea.createdAt).toLocaleDateString();
 
-            const id = "..." + tarea.id.substring(18);
+            //Solo se saca desde el caracter 18 en adelante, Resultado: "...000000"
+            /* const id = "..." + tarea.id.substring(18); */
 
             //Creamos el html de la fila con los valores que sacamos del JSON
             //Le establecemos en el class del span de status la función para que el color del status cambie de color
+            //A cada fila se le mete un onclick que va a cambiar el valor de la variable global del id de la tarea seleccionada
             fila = `
-            <tr>
-                <td class="center-text"><strong>${id}</strong></td>
+            <tr id="fila-${tarea.id}" onclick="seleccionarFila('${tarea.id}')" style="cursor: pointer;">
+                <td class="center-text"><strong>${tarea.id}</strong></td>
                 <td class="center-text">${tarea.taskName}</td>
                 <td class="center-text">${tarea.durationMinutes}</td>
                 <td class="center-text">${fecha}</td>
@@ -210,12 +273,32 @@ function recargarTabla(tareas, tabla) {
     }
 }
 
+//Selecciona una fila de la tabla y la id de esa fila se va a asignar a la variable global de ID
+function seleccionarFila(id){
+    //Cambiamos el valor de la variable global por la que se envia al dar click en una fila
+    idTareaSeleccionada = id;
+
+    //Quitamos el color a las otras filas, evitando que haya varias filas "Seleccionadas"
+    const filas = document.querySelectorAll("tbody tr");
+    filas.forEach(fila => {
+        fila.style.color = "#406E8E";
+    });
+
+    //La fila seleccionada se la va a cambiar el color del texto a amarillo
+    const filaSeleccionada = document.getElementById(`fila-${id}`);
+
+    /* console.log("Fila seleccionada: " + filaSeleccionada.id) */
+    if(filaSeleccionada){
+        filaSeleccionada.style.color = "#d6ac1b"
+    }
+}
+
 //Convierte cada estado de los que vienen asignados en el JSON a los estados asignados dentro del CSS para que cambien de color segun este
 function obtenerStatus(status) {
     switch (status) {
         case 'PENDING': return 'PorHacer';
         case 'IN_PROGRESS': return 'EnProgreso';
-        case 'TERMINTED': return 'Hecha';
+        case 'TERMINATED': return 'Hecha';
         case 'PAUSED': return 'Pausada';
         default: return '';
     }
@@ -223,6 +306,7 @@ function obtenerStatus(status) {
 
 //Función que crea la pantallita para el formulario de creación de tareas
 function formularioCreacionDeTareas() {
+    //Todo el contenido del html, tambien le asignamos una id y una clase
     const ModalAgregar = document.createElement("div");
     ModalAgregar.className = "pantalla-agregar";
     ModalAgregar.id = "pantallaAgregar";
@@ -230,7 +314,7 @@ function formularioCreacionDeTareas() {
     //Este es el html de la pantalla que aparece
     ModalAgregar.innerHTML = `
         <div class="contenido-pantalla-agregar">
-            <h2>Agregar nueva tarea</h2>
+            <h2>Agregar Nueva Tarea</h2>
             
             <label>Nombre de la tarea:</label>
             <input type="text" id="nombre" placeholder="Ej. Estudiar Física">
@@ -239,7 +323,7 @@ function formularioCreacionDeTareas() {
             <input type="number" id="tiempo" value="25" min="1">
             
             <div class="modal-buttons">
-                <button class="btn-secondary" onclick="cerrarFormularioCreacionDeTareas()">Cancelar</button>
+                <button class="btn-secondary" onclick="cerrarFormulario('${ModalAgregar.id}')">Cancelar</button>
                 <button onclick="crearTarea(nombre, tiempo)">Guardar</button>
             </div>
         </div>
@@ -250,10 +334,64 @@ function formularioCreacionDeTareas() {
     document.getElementById("pantallaAgregar").focus();
 }
 
+//Función que crea la pantallita para el formulario de edición de tareas
+function formularioModificacionDeTareas(){
+    //Checamos que la variable global de id tenga una id existente asignada
+    if(!idTareaSeleccionada){
+        alert("Selecciona una fila de la tabla");
+        return;
+    }
+
+    //Agarramos la id de la variable global y la usamos para buscar dentro de la copia local de los datos el registro con esa id
+    const tarea = datosTareas.find(t => t.id === idTareaSeleccionada);
+
+    //Creamos el modal (Codigo reusado del modal de agregar tarea)
+    const ModalEditar = document.createElement("div");
+    ModalEditar.className = "pantalla-agregar";
+    ModalEditar.id = "pantallaEditar";
+    /* const IdParaCerrar = "pantallaEditar"; */
+
+    //Este es el html de la pantalla que aparece, nadamas que ahora ya imprime los valores de la copia local de la bd
+    //Se manda a llamar a la funcion editarTarea dandole los valores de nombre, tiempo y status
+    ModalEditar.innerHTML = `
+        <div class="contenido-pantalla-agregar">
+            <h2>Editar Tarea Existente</h2>
+            
+            <label>Nombre de la tarea:</label>
+            <input type="text" id="nombre" value="${tarea.taskName}">
+            
+            <label>Duración (minutos):</label>
+            <input type="number" id="tiempo" value="${tarea.durationMinutes}">
+
+            <label>Estado:</label>
+            <select id="modalStatus" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px;">
+                <option value="PENDING" ${tarea.status === 'PENDING' ? 'selected' : ''}>Por Hacer</option>
+                <option value="IN_PROGRESS" ${tarea.status === 'IN_PROGRESS' ? 'selected' : ''}>En Progreso</option>
+                <option value="TERMINATED" ${tarea.status === 'TERMINATED' ? 'selected' : ''}>Terminada</option>
+                <option value="PAUSED" ${tarea.status === 'PAUSED' ? 'selected' : ''}>En pausa</option>
+            </select>
+            
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="cerrarFormulario('${ModalEditar.id}')">Cancelar</button>
+                <button onclick="modificarTarea(nombre, tiempo, modalStatus)">Guardar</button>
+            </div>
+        </div>
+    `;
+
+    //Agregamos lo que creamos al body
+    /* console.log(ModalEditar.id) */
+    document.body.appendChild(ModalEditar);
+    document.getElementById("pantallaEditar").focus();
+}
+
 //Borra la pantalla del formulario que se crea arriba
-function cerrarFormularioCreacionDeTareas() {
-    const modal = document.getElementById("pantallaAgregar");
+function cerrarFormulario(valorDeId) {
+    /* console.log(valorDeId); */
+    // Buscamos directamente el elemento con el ID que recibimos
+    const modal = document.getElementById(valorDeId);
+    
+    // Si existe, lo borramos
     if (modal) {
         document.body.removeChild(modal);
-    }
+    };
 }
