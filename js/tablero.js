@@ -11,12 +11,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const nombreDeUsuarioText = document.getElementById("usernameDisplay");
     const letrasPerfil = document.getElementById("userAvatar");
 
-    //Le asignamos al boton de "Agregar Tarea" la funcion para que aparezca la pantalla donde ingresa los datos.
+    //Le asignamos a los botones sus respectivos eventListeners asignandoles funciones que estan dentro de este js
     const botonAgregar = document.getElementById("botonAgregarTarea");
     botonAgregar.addEventListener("click", formularioCreacionDeTareas);
 
     const botonEditar = document.getElementById("botonEditarTarea");
     botonEditar.addEventListener("click", formularioModificacionDeTareas);
+
+    const botonEliminar = document.getElementById("botonEliminarTarea");
+    botonEliminar.addEventListener("click", eliminarTarea)
 
     //Le asignamos al div donde esta el nombre del usuario una funcion para abrir una lista desplegable que tendrá el boton de cerrar sesión
     const perfilParte = document.getElementById("perfilParte");
@@ -186,8 +189,31 @@ async function modificarTarea(nombreTarea, tiempo, estado){
 }
 
 //GRR PINCHE ERNESTO NO LE HA METIDO EL ENDPOINT PARA ELIMINAR LAS TAREAS
-async function eliminarTarea(idTareaSeleccionada){
+async function eliminarTarea(){
+    //Validar que se seleccionó alguna fila de la tabla:
+    if(!idTareaSeleccionada){
+        alert("Selecciona una fila de la tabla");
 
+    } else {
+        //La direccion del endpoint nos pide una id, asi que le pasaremos como parametro el valor de la variable global
+        try {
+            const response = await fetch(`${CONFIG.API_URL}/pomodoros/${idTareaSeleccionada}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                //Recarga la tabla con la tarea eliminada
+                const tabla = document.querySelector("table tbody");
+                cargarTareas(tabla);
+
+            } else {
+                console.error("Error al editar tarea:", response.status);
+            }
+        } catch (error) {
+            console.error("Error de red:", error);
+        }
+    }
 }
 
 //Adivina que es lo que hace esta función (Rompe la cookie y borra el nombre de LocalStorage)
@@ -195,9 +221,6 @@ async function cerrarSesion() {
     try {
         const response = await fetch(`${CONFIG.API_URL}/auth/logout`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             credentials: 'include'
         });
 
