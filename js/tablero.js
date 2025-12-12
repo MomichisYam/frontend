@@ -108,9 +108,10 @@ async function cargarTareas(tabla) {
 //Creamos una tarea nueva pasandole el nombre y el tiempo que se establece desde el modal de creacion de tareas
 async function crearTarea(nombreTarea, tiempo) {
     //Valida que los campos no esten vacios
-    if (nombreTarea.value.trim() === "" || tiempo.value.trim() === "") {
+    if (nombreTarea.value === "" || tiempo.value === "") {
         alert("Llena todos los campos");
         return;
+
     } else {
         const nuevaTarea = {
             taskName: nombreTarea.value,
@@ -128,9 +129,6 @@ async function crearTarea(nombreTarea, tiempo) {
             });
 
             if (response.ok) {
-                const data = await response.json();
-                /* console.log("Sesión creada con ID:", data.id); */
-
                 //Recarga la tabla con la nueva tarea
                 const tabla = document.querySelector("table tbody");
                 cargarTareas(tabla);
@@ -149,9 +147,10 @@ async function crearTarea(nombreTarea, tiempo) {
 //Modificamos los valores nombre, tiempo y el estado de una tarea existente
 async function modificarTarea(nombreTarea, tiempo, estado){
     //Valida que los campos no esten vacios, no se valida el estado porque ese nunca va a estar vacio
-    if (nombreTarea.value.trim() === "" || tiempo.value.trim() === "") {
+    if (nombreTarea.value === "" || tiempo.value === "") {
         alert("Llena todos los campos");
         return;
+
     } else {
         const nuevosDatos = {
             taskName: nombreTarea.value,
@@ -159,6 +158,7 @@ async function modificarTarea(nombreTarea, tiempo, estado){
             status: estado.value
         };
 
+        //La direccion del endpoint nos pide una id, asi que le pasaremos como parametro el valor de la variable global
         try {
             const response = await fetch(`${CONFIG.API_URL}/pomodoros/${idTareaSeleccionada}`, {
                 method: "PUT",
@@ -170,8 +170,6 @@ async function modificarTarea(nombreTarea, tiempo, estado){
             });
 
             if (response.ok) {
-                const data = await response.json();
-
                 //Recarga la tabla con la tarea editada
                 const tabla = document.querySelector("table tbody");
                 cargarTareas(tabla);
@@ -188,7 +186,7 @@ async function modificarTarea(nombreTarea, tiempo, estado){
 }
 
 //GRR PINCHE ERNESTO NO LE HA METIDO EL ENDPOINT PARA ELIMINAR LAS TAREAS
-async function eliminarTarea(){
+async function eliminarTarea(idTareaSeleccionada){
 
 }
 
