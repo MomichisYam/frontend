@@ -25,6 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const perfilParte = document.getElementById("perfilParte");
     perfilParte.addEventListener("click", abrirMenuDesplegablePerfil);
 
+    //Checar constantemente lo que se selecciona en el filtro y mandamos a llamar verSelecciónFiltro con una funcion anonima para que se ejecute cada vez que se haga el cambio
+    const seleccionFiltro = document.getElementById("filter-select");
+    seleccionFiltro.addEventListener("change", () => {
+        verSelecciónFiltro(seleccionFiltro)
+    });
+
     //Se selecciona solo el contenido de la etiqueta tbody dentro de la etiqueta table y se mete a una variable
     const tabla = document.querySelector("table tbody");
 
@@ -83,12 +89,12 @@ function cargarUsuario(usuario, nombreDeUsuarioText, letrasPerfil) {
 //Va a generar un JSON con todos los registros de la tabla segun el id del usuario que este registrado
 async function cargarTareas(tabla) {
     try {
+        //Hacemos la petición a la URL del endpoint encargado de regresar todas las tareas
         const response = await fetch(`${CONFIG.API_URL}/pomodoros`, {
+            //Metodo GET ya que estamos obteniendo datos nadamas
             method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
+            //Incluimos la cookie con la sesión del usuario
+            credentials: "include"
         });
 
         if (response.ok) {
@@ -101,9 +107,11 @@ async function cargarTareas(tabla) {
             //Se usan los datos del JSON para llenar la tabla
             recargarTabla(tareas, tabla);
         } else {
+            //Este error sale si es que se tuvo algun problema con el proceso de recolección de los datos
             console.error("Error al cargar tareas:", response.status);
         }
     } catch (error) {
+        //Este error sale si es que no se pudo realizar la petición con la url del endpoint
         console.error("Error de red:", error);
     }
 }
@@ -116,18 +124,24 @@ async function crearTarea(nombreTarea, tiempo) {
         return;
 
     } else {
+        //Empaquetamos los datos intentando seguir un formato JSON para el registro de mongo
         const nuevaTarea = {
             taskName: nombreTarea.value,
             durationMinutes: parseInt(tiempo.value)
         };
 
         try {
+            //Hacemos la petición a la URL del endpoint encargado de crear una tarea
             const response = await fetch(`${CONFIG.API_URL}/pomodoros`, {
+                //Usamos el metodo POST ya que vamos a crear un nuevo registro
                 method: "POST",
+                //Se le indica a la petición que los datos que le vamos a mandar en el body los tiene que leer como un JSON
                 headers: {
                     "Content-Type": "application/json",
                 },
+                //Se encarga de incluir la sesión del usuario guardada en una cookie para la petición
                 credentials: "include",
+                //Pasa el paquete de datos que hicimos anteriormente y lo serializa en un mismo string
                 body: JSON.stringify(nuevaTarea),
             });
 
@@ -139,9 +153,11 @@ async function crearTarea(nombreTarea, tiempo) {
                 //Cerramos la pestaña
                 cerrarFormulario("pantallaAgregar")
             } else {
+                //Este error sale si es que se tuvo algun problema con el proceso de creación
                 console.error("Error al crear tarea:", response.status);
             }
         } catch (error) {
+            //Este error sale si es que no se pudo realizar la petición con la url del endpoint
             console.error("Error de red:", error);
         }
     }
@@ -155,6 +171,7 @@ async function modificarTarea(nombreTarea, tiempo, estado){
         return;
 
     } else {
+        //Empaquetamos los datos intentando seguir un formato JSON para el registro de mongo
         const nuevosDatos = {
             taskName: nombreTarea.value,
             durationMinutes: parseInt(tiempo.value),
@@ -163,12 +180,17 @@ async function modificarTarea(nombreTarea, tiempo, estado){
 
         //La direccion del endpoint nos pide una id, asi que le pasaremos como parametro el valor de la variable global
         try {
+            //Hacemos la petición a la URL del endpoint encargado de modificar la tarea
             const response = await fetch(`${CONFIG.API_URL}/pomodoros/${idTareaSeleccionada}`, {
+                //Usamos el metodo PUT ya que vamos a actualizar completamente un registro
                 method: "PUT",
+                //Se le indica a la petición que los datos que le vamos a mandar en el body los tiene que leer como un JSON
                 headers: {
                     "Content-Type": "application/json",
                 },
+                //Se encarga de incluir la sesión del usuario guardada en una cookie para la petición
                 credentials: "include",
+                //Pasa el paquete de datos que hicimos anteriormente y lo serializa en un mismo string
                 body: JSON.stringify(nuevosDatos),
             });
 
@@ -179,16 +201,19 @@ async function modificarTarea(nombreTarea, tiempo, estado){
 
                 //Cerramos la pestaña
                 cerrarFormulario("pantallaEditar")
+
             } else {
+                //Este error sale si es que se tuvo algun problema con el proceso de editado
                 console.error("Error al editar tarea:", response.status);
             }
         } catch (error) {
+            //Este error sale si es que no se pudo realizar la petición con la url del endpoint
             console.error("Error de red:", error);
         }
     }
 }
 
-//GRR PINCHE ERNESTO NO LE HA METIDO EL ENDPOINT PARA ELIMINAR LAS TAREAS
+//Borra la tarea seleccionada mediante su id guardado en la variable global
 async function eliminarTarea(){
     //Validar que se seleccionó alguna fila de la tabla:
     if(!idTareaSeleccionada){
@@ -197,8 +222,11 @@ async function eliminarTarea(){
     } else {
         //La direccion del endpoint nos pide una id, asi que le pasaremos como parametro el valor de la variable global
         try {
+            //Hacemos la petición a la url del endpoint
             const response = await fetch(`${CONFIG.API_URL}/pomodoros/${idTareaSeleccionada}`, {
+                //Utilizamos DELETE porque vamos a borrar un registro
                 method: "DELETE",
+                //Se encarga de incluir la sesión del usuario guardada en una cookie para la petición
                 credentials: "include"
             });
 
@@ -208,9 +236,11 @@ async function eliminarTarea(){
                 cargarTareas(tabla);
 
             } else {
+                //Este error sale si es que se tuvo algun problema con el proceso de borrado
                 console.error("Error al editar tarea:", response.status);
             }
         } catch (error) {
+            //Este error sale si es que no se pudo realizar la petición con la url del endpoint
             console.error("Error de red:", error);
         }
     }
@@ -291,6 +321,54 @@ function recargarTabla(tareas, tabla) {
 
             //Se le va sumando cada fila hasta que ya no haya ninguna tarea
             tabla.innerHTML += fila
+        });
+    }
+}
+
+//Metodo recargarTabla modificado para que se realice el filtro de las fila
+function filtrarTabla(valorFiltro, tabla){
+    //Vaciamos la tabla
+    tabla.innerHTML = "";
+
+    //Variable fila declarada para su uso en cada uno de los casos
+    let fila = ``;
+
+    //Validar que la variable global con los datos locales no este vacia, si esta vacio va a retornar "No hay nadota"
+    if (!datosTareas.length) {
+        alert("No hay datos guardados");
+
+    } else {
+        //Si el JSON no viene vacio se hará el procedimiento normalmente:
+
+        //Por cada registro de tarea dentro del JSON va a hacer lo siguiente
+        datosTareas.forEach(tarea => {
+            //Pasamos el valor de la fecha a un string legible
+            const fecha = new Date(tarea.createdAt).toLocaleDateString();
+
+            //Solo se saca desde el caracter 18 en adelante, Resultado: "...000000"
+            /* const id = "..." + tarea.id.substring(18); */
+
+            //Creamos el html de la fila con los valores que sacamos del JSON
+            //Le establecemos en el class del span de status la función para que el color del status cambie de color
+            //A cada fila se le mete un onclick que va a cambiar el valor de la variable global del id de la tarea seleccionada
+            fila = `
+            <tr id="fila-${tarea.id}" onclick="seleccionarFila('${tarea.id}')" style="cursor: pointer;">
+                <td class="center-text"><strong>${tarea.id}</strong></td>
+                <td class="center-text">${tarea.taskName}</td>
+                <td class="center-text">${tarea.durationMinutes}</td>
+                <td class="center-text">${fecha}</td>
+                <td class="center-text">
+                    <span class="status ${obtenerStatus(tarea.status)}">
+                        ${tarea.status}
+                    </span>
+                </td>
+            </tr>`;
+
+            //Si es que el estatus de la tarea de esa iteración es el mismo que el parametro valorFiltro, se va a añadir la fila a la tabla.
+            if(tarea.status == valorFiltro){
+                //Se le va sumando cada fila hasta que ya no haya ninguna tarea
+                tabla.innerHTML += fila
+            }
         });
     }
 }
@@ -422,4 +500,56 @@ function cerrarFormulario(valorDeId) {
     if (modal) {
         document.body.removeChild(modal);
     };
+}
+
+//Validamos lo que se selecciona en el elemento "filter-select" del html y dependiendo de este se va a ejecutar un filtro en las filas de la tabla
+function verSelecciónFiltro(selectFiltro){
+    //Se saca el valor de lo que se seleccionó en el Select
+    const seleccionLista = selectFiltro.value;
+
+    //Establecemos el valor de tabla para su uso posterior como atributo
+    const tabla = document.querySelector("table tbody");
+
+    //Se hace un switch con las posibles selecciones. Estas vienen directo del HTML, dentro de cada una de las opciones se le asigno un Valor el cual vamos a comparar el siguiente switch.
+    //Los casos 1-4 ejecutan filtrarTabla, que es casi lo mismo que recargarTabla solo que se va a hacer la inserción de las filas solo si estas tienen el mismo estado que el valorFiltro establecido
+    switch(seleccionLista){
+        case 'All': {
+            console.log("Se seleccionó ALL");
+            //Nadamas recarga la pagina con todas las tareas y se le pasa como parametro el array con los datos locales.
+            recargarTabla(datosTareas, tabla);
+        }
+        break;
+
+        case '1': {
+            /* console.log("Se seleccionó 1"); */
+            const valorFiltro = 'TERMINATED';
+            
+            filtrarTabla(valorFiltro, tabla);
+        }
+        break;
+
+        case '2': {
+            /* console.log("Se seleccionó 2"); */
+            const valorFiltro = 'IN_PROGRESS';
+
+            filtrarTabla(valorFiltro, tabla);
+        }
+        break;
+
+        case '3': {
+            /* console.log("Se seleccionó 3"); */
+            const valorFiltro = 'PAUSED';
+
+            filtrarTabla(valorFiltro, tabla);
+        }
+        break;
+
+        case '4': {
+            /* console.log("Se seleccionó 4"); */
+            const valorFiltro = 'PENDING';
+
+            filtrarTabla(valorFiltro, tabla);
+        }
+        break;
+    }
 }
