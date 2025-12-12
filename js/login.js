@@ -30,21 +30,15 @@ async function login(event) {
 
     if (response.ok) {
       const data = await response.json();
-<<<<<<< HEAD
-=======
 
->>>>>>> 01659e9a295d76dd246c6b8b606ddcf5e18381aa
       if (msgLogin) {
         msgLogin.textContent = "¡Inicio de sesión exitoso! Redirigiendo...";
         msgLogin.style.color = "green";
       }
 
       localStorage.setItem("UsuarioActivo", username);
-<<<<<<< HEAD
+
       localStorage.setItem("UserId", data.userId);
-=======
-      localStorage.setItem("UsuarioiD", data.userId);
->>>>>>> 01659e9a295d76dd246c6b8b606ddcf5e18381aa
 
       console.log("Login exitoso. Cookie guardada por el navegador.");
       window.location.href = "../html/tablero.html";
