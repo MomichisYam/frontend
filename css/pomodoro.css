@@ -23,6 +23,13 @@ body {
     transition: transform 0.2s ease;
 }
 
+.stop-button{
+    width: 100%; 
+    display: flex; 
+    justify-content: center; 
+    margin-top: 10px;
+}
+
 .pomodoro-back:hover {
     transform: scale(1.05);
 }
@@ -135,7 +142,10 @@ body {
 }
 
 .control-btn {
-    padding: 15px 30px;
+    background-color: #e74c3c; 
+    color: white; 
+    width: auto; 
+    padding: 10px 30px;
     font-size: 1.1rem;
     border: none;
     border-radius: 12px;

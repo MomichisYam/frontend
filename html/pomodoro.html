@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <!--Cabecera con el titulo de la interfaz -->
     <header class="top-bar">
         <div class="logo-section">
             <h1>Temporizador Pomodoro</h1>
@@ -19,17 +20,20 @@
         </div>
     </header>
 
+    <!--Regresar al tablero-->
     <div class="pomodoro-back">
         <a href="../html/tablero.html">
             <img src="../imagenes/volver.png" alt="Volver al Tablero">
         </a>
     </div>
 
+    <!--Contenedor principañ-->
     <div class="container">
         <div class="pomodoro-box">
             <!-- Temporizador principal -->
             <div class="timer-display">
                 <div class="time-text">
+                    <!--Números por defecto del temporizador-->
                     <span id="minutes">25</span>:<span id="seconds">00</span>
                 </div>
             </div>
@@ -50,13 +54,14 @@
                 </button>
             </div>
             
-            <div style="width: 100%; display: flex; justify-content: center; margin-top: 10px;">
-                <button class="control-btn" id="finishBtn" style="background-color: #e74c3c; color: white; width: auto; padding: 10px 30px;">
+            <!--Botón para terminar la terea-->
+            <div class ="stop-button">
+                <button class="control-btn" id="finishBtn">
                     <span class="btn-text">Terminar Tarea</span>
                 </button>
             </div>
 
-            <!-- Configuración de tiempo -->
+            <!-- Configuración de tiempo, pomodoro, un descanso corto o largo -->
             <div class="time-settings">
                 <h3>Configurar Tiempo</h3>
                 <div class="time-options">

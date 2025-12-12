@@ -1,17 +1,20 @@
-// Variables de estado
-let timerInterval;
-let remainingSeconds = 25 * 60; // Por defecto 25 min
-let isRunning = false;
-let currentTaskId = localStorage.getItem("TaskId"); // ID de la tarea seleccionada en el tablero
+// Variables
+let timerInterval; //Intervalo de tiempo
+let remainingSeconds = 25 * 60; // Por defecto 25 min (1500 segundos)
+let isRunning = false; //Estado del temporizador
+let currentTaskId = localStorage.getItem("TaskId"); // ID de la tarea seleccionada desde el tablero
+
 
 document.addEventListener('DOMContentLoaded', async () => {
+    //Obtener el ID del usuario guardado en localStorage
     const userId = localStorage.getItem("UserId");
     if (!userId) {
+        //Si no hay se redirige al login
         window.location.href = "login.html";
         return;
     }
 
-    // 1. Cargar información de la tarea actual
+    // 1. Cargar información de la tarea actual, si no se indica que hay que seleccionar una
     if (currentTaskId) {
         await cargarInfoTarea(currentTaskId);
     } else {
@@ -19,16 +22,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert("Por favor selecciona una tarea en el tablero primero.");
     }
 
-    // 2. Cargar las estadísticas de abajo (NUEVO)
+    // 2. Cargar las estadísticas de abajo 
     await actualizarEstadisticasInferiores(userId);
 
     // 3. Configurar botones
     document.getElementById("startBtn").addEventListener("click", iniciarTemporizador);
     document.getElementById("pauseBtn").addEventListener("click", pausarTemporizador);
-    // El botón "Reiniciar" ahora solo resetea el reloj visualmente (sin terminar la tarea)
     document.getElementById("resetBtn").addEventListener("click", reiniciarReloj);
     
-    // El botón "Terminar" (asegúrate de haberlo agregado en el HTML)
+   // Boton de terminar
     const btnFinish = document.getElementById("finishBtn");
     if (btnFinish) {
         btnFinish.addEventListener("click", terminarTareaDefinitivamente);
@@ -66,7 +68,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
+//Función para iniciar el temporizador de tiempo
 async function iniciarTemporizador() {
+    //Verificar que no haya tarea o que no este corriendo alguna
     if (!currentTaskId || isRunning) return;
 
     try {
@@ -75,29 +79,32 @@ async function iniciarTemporizador() {
             credentials: "include"
         });
 
+        //Si se logra correr, isRunning se pone como True y el boton de iniciar se inhabilita y se habilita pausar
         if (response.ok) {
             isRunning = true;
             toggleBotones(true);
             
+            //Disminuir intervalo de tiempo cada segundo (1000ms)
             timerInterval = setInterval(() => {
                 remainingSeconds--;
                 actualizarDisplay();
 
+                //Cuando llegue a cero:
                 if (remainingSeconds <= 0) {
-                    // 1. Frenar todo
+                    // 1. Frenar todo e intercambiar botones
                     clearInterval(timerInterval);
                     isRunning = false;
                     toggleBotones(false);
 
-                    // 3. PREGUNTAR AL USUARIO (Lógica corregida para actualizar métricas)
+                    // 2. Preguntarle al usuario si ya acabo
                     setTimeout(() => {
-                        const tareaTerminada = confirm("⏰ ¡Tiempo terminado!\n\n¿Ya finalizaste esta tarea por completo?\n(Aceptar = Sí, Archivar y sumar puntos)\n(Cancelar = No, solo tomar descanso y seguir)");
+                        const tareaTerminada = confirm("¡Tiempo terminado!\n\n¿Ya finalizaste esta tarea por completo?\n(Aceptar = Sí, Archivar y sumar puntos)\n(Cancelar = No, solo tomar descanso y seguir)");
 
                         if (tareaTerminada) {
-                            // Si dice que sí, terminamos la tarea y se suman las métricas
+                            // Si dice que sí termina la tarea y se suman las métricas
                             terminarTareaDefinitivamente(); 
                         } else {
-                            // Si dice que no, preguntamos por el descanso
+                            // Si dice que no le preguntamos por un descanso de 5 minutos
                             const tomarDescanso = confirm("¿Quieres iniciar tu descanso de 5 minutos?");
                             if(tomarDescanso) {
                                 iniciarModoDescanso();
@@ -121,15 +128,16 @@ async function detenerTemporizador() {
             method: "POST",
             credentials: "include"
         });
-        // No hacemos nada visual extra, es solo para guardar estado si cambias de modo
     } catch (error) {
         console.error("Error al detener:", error);
     }
 }
 
+//Función para ahora si, pausar el pomodoro
 async function pausarTemporizador() {
     if (!isRunning) return;
 
+    //Tratar de llamar al endpoint pause para pausar el pomodoro
     try {
         const response = await fetch(`${CONFIG.API_URL}/pomodoros/${currentTaskId}/pause`, {
             method: "POST",
@@ -146,68 +154,78 @@ async function pausarTemporizador() {
     }
 }
 
+//Función para reiniciar el temporizador
 async function reiniciarReloj() {
     if (isRunning) {
         await pausarTemporizador(); 
     }
-    
+    //Limpiar intervalo de tiempo, indicar que ya no se esta corriendo e intercambiar botones
     clearInterval(timerInterval);
     isRunning = false;
     toggleBotones(false);
 
+    //Establecer duración del pomodoro
     const duration = localStorage.getItem("TaskDuration") || 25;
     const modoDescanso = document.querySelector('input[name="timerMode"]:checked').id;
     
-    if (modoDescanso === 'shortBreak5') remainingSeconds = 5 * 60;
-    else if (modoDescanso === 'longBreak15') remainingSeconds = 15 * 60;
-    else remainingSeconds = duration * 60;
+    if (modoDescanso === 'shortBreak5') remainingSeconds = 5 * 60; //300 segundos
+    else if (modoDescanso === 'longBreak15') remainingSeconds = 15 * 60; //900 segundos
+    else remainingSeconds = duration * 60; //Por defecto 1500 segundos
 
     actualizarDisplay();
 }
 
+//Función para terminar una tarea
 async function terminarTareaDefinitivamente() {
     // Si la función se llama automáticamente desde el timer, no preguntamos confirmación de nuevo
     // Si se llama desde el botón, sí preguntamos
-    // (Podemos manejarlo simple: el botón siempre pregunta)
     
     // Verificamos si fue clic manual (evento existe) o llamada automática (evento undefined)
     const esManual = (window.event && window.event.type === 'click');
     
+    //Confirmar que la tarea se quiere terminar
     if(esManual && !confirm("¿Marcar esta tarea como TERMINADA? Desaparecerá de pendientes.")) return;
 
+    //Tratar de detener la tarea con el endpoint stop
     try {
         const response = await fetch(`${CONFIG.API_URL}/pomodoros/${currentTaskId}/stop`, {
             method: "POST",
             credentials: "include"
         });
 
+        //Si se pudo detener, se limpia el intervalo de tiempo, se indica que ya no se esta corriendo y se intercambian los botones
         if (response.ok) {
             clearInterval(timerInterval);
             isRunning = false;
             toggleBotones(false);
             
+            //Marcar tarea complatada en las estadisticas del usuario
             const userId = localStorage.getItem("UserId");
             actualizarEstadisticasInferiores(userId);
             
             alert("Tarea finalizada y registrada en estadísticas.");
-            // window.location.href = "tablero.html";
         }
     } catch (error) {
         console.error("Error al detener:", error);
     }
 }
 
+
+//Función para indicar que se salto un descanso
 async function registrarDescansoSaltado() {
+    //Tratar de llamar al endpoint skip-break
     try {
         const response = await fetch(`${CONFIG.API_URL}/pomodoros/${currentTaskId}/skip-break`, {
             method: "POST",
             credentials: "include"
         });
 
+        //Si se registra el skipeo correctamente, el reloj se reinicia 
         if (response.ok) {
-            alert("Descanso saltado registrado. 💪 ¡A seguir sumando!");
+            alert("Descanso saltado registrado. ¡A seguir sumando!");
             reiniciarReloj();
             
+            //Actualizar estadisticas del usuario con su ID guardado localmente.
             const userId = localStorage.getItem("UserId");
             actualizarEstadisticasInferiores(userId);
         }
@@ -216,29 +234,39 @@ async function registrarDescansoSaltado() {
     }
 }
 
+//Función para iniciar el modo de descanso
 function iniciarModoDescanso() {
     const radioShort = document.getElementById('shortBreak5');
     if (radioShort) {
         radioShort.checked = true;
         radioShort.dispatchEvent(new Event('change')); 
     }
-    alert("Modo descanso activado. ¡Relájate un poco! ☕");
+    alert("Modo descanso activado. ¡Relájate un poco!");
 }
 
+//Función para actualizar el temporizador
 function actualizarDisplay() {
+    //Función floor sobre los segundos restantes entre 60
     const minutes = Math.floor(remainingSeconds / 60);
+    //Total de segundos entre 60
     const seconds = remainingSeconds % 60;
     
+    //padStart para mostrar 2 digitos siempre (05)
     document.getElementById("minutes").textContent = minutes.toString().padStart(2, '0');
     document.getElementById("seconds").textContent = seconds.toString().padStart(2, '0');
 }
 
+//Función para intercambiar que un botón se inhabilite, iniciar y pausar
 function toggleBotones(corriendo) {
+    //Se deshabilita si es true (Esta activo un pomodoro)
     document.getElementById("startBtn").disabled = corriendo;
+    //Se habilita si es true (Se puede pausar el pomodoro)
     document.getElementById("pauseBtn").disabled = !corriendo;
 }
 
+//Función para cargar la información de una tarea 
 function cargarInfoTarea(id) {
+    //Si no tiene TaskName, se le asigna tarea en curso y duración 25 por defecto
     const taskName = localStorage.getItem("TaskName") || "Tarea en curso";
     const duration = localStorage.getItem("TaskDuration") || 25;
     document.getElementById("currentSession").textContent = taskName;
@@ -246,20 +274,27 @@ function cargarInfoTarea(id) {
     actualizarDisplay();
 }
 
+//Función para obtener las estadísticas del usuario
 async function actualizarEstadisticasInferiores(userId) {
+    //Tratar de llamar al endpoint de stats y el ID del usuario
     try {
         const response = await fetch(`${CONFIG.API_URL}/pomodoros/stats/${userId}`, {
             method: "GET",
             credentials: "include"
         });
+        //Si hay estadísticas, se obtiene el texto de la respuesta y se parsean 
+        // las estadisticas de JSON a texto, si no hay se ponen como nulo
         if (response.ok) {
             const text = await response.text();
             const stats = text ? JSON.parse(text) : null;
+            //Si hay estadisticas se carga la información de sesiones, minutos de pomodoro y tiempo total
             if (stats) {
                 document.getElementById("completedCount").textContent = stats.totalSessions || 0;
                 const totalMinutes = stats.totalMinutesFocus || 0;
+                //Convertir el tiempo total
                 const hours = Math.floor(totalMinutes / 60);
                 const mins = totalMinutes % 60;
+                //Mostrarlo como HH::MM con padStart
                 document.getElementById("totalTime").textContent = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
             }
         }
